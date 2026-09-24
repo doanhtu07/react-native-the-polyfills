@@ -9,9 +9,9 @@
   "main": "index.js",
   "packageManager": "pnpm@12.6.0",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "husky",
-    "typecheck": "pnpm -r --parallel typecheck"
+    "typecheck": "pnpm -r --parallel typecheck",
+    "test": "pnpm -r --parallel test"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.2.3",

@@ -1,7 +1,14 @@
 import { TurboModuleRegistry, type TurboModule } from 'react-native'
 
+let cachedSpec: Spec | null = null
+
 export interface Spec extends TurboModule {
-  multiply(a: number, b: number): number
+  getRandomBase64(byteLength: number): string
 }
 
-export default TurboModuleRegistry.getEnforcing<Spec>('GetRandomValues')
+export function getNativeGetRandomValues(): Spec {
+  if (cachedSpec == null) {
+    cachedSpec = TurboModuleRegistry.getEnforcing<Spec>('GetRandomValues')
+  }
+  return cachedSpec
+}
