@@ -58,7 +58,7 @@ export function getRandomValues<T extends ArrayBufferView>(array: T): T {
     return array
   }
 
-  // Old-arch remote debugging in Chrome can't call sync TurboModules
+  // Remote debugging in Chrome can't call sync native methods
   // ("Calling synchronous methods on native modules is not supported in
   // Chrome"), so fall back to Math.random() there.
   if (isRemoteDebuggingInChrome()) {

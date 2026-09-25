@@ -1,27 +1,45 @@
 import type { ExpoConfig } from 'expo/config'
 
 const config: ExpoConfig = {
-  name: 'the-polyfills-57',
-  slug: 'the-polyfills-57',
+  name: 'the-polyfills-53',
+  slug: 'the-polyfills-53',
   version: '1.0.0',
   orientation: 'portrait',
   icon: './assets/images/icon.png',
-  scheme: 'thepolyfills57',
+  scheme: 'thepolyfills53',
   userInterfaceStyle: 'automatic',
+  newArchEnabled: false,
   platforms: ['ios', 'android'],
   ios: {
-    bundleIdentifier: 'com.thepolyfills57.exampleexpo',
+    bundleIdentifier: 'com.thepolyfills53.exampleexpo',
     supportsTablet: true,
   },
   android: {
-    package: 'com.thepolyfills57.exampleexpo',
+    package: 'com.thepolyfills53.exampleexpo',
     adaptiveIcon: {
       backgroundColor: '#E6F4FE',
       foregroundImage: './assets/images/android-icon-foreground.png',
       backgroundImage: './assets/images/android-icon-background.png',
       monochromeImage: './assets/images/android-icon-monochrome.png',
     },
-    predictiveBackGestureEnabled: false,
+
+    // === Edge to edge ===
+
+    // Case 1: Resize + Edge to edge opt out
+    softwareKeyboardLayoutMode: 'resize',
+    edgeToEdgeEnabled: false,
+
+    // Case 2: Pan + Edge to edge opt out
+    // softwareKeyboardLayoutMode: 'pan',
+    // edgeToEdgeEnabled: false,
+
+    // Case 3: Edge to edge enabled + adjustResize
+    // softwareKeyboardLayoutMode: 'resize',
+    // edgeToEdgeEnabled: true,
+
+    // Case 4: Edge to edge enabled + adjustPan
+    // softwareKeyboardLayoutMode: 'pan',
+    // edgeToEdgeEnabled: true,
   },
   plugins: [
     'expo-router',
@@ -39,11 +57,9 @@ const config: ExpoConfig = {
     ],
     'expo-font',
     'expo-web-browser',
-    'expo-image',
-    'expo-status-bar',
 
-    '@react-native-vector-icons/ant-design',
-    '@react-native-vector-icons/material-design-icons',
+    // Custom plugins
+    './plugins/ios/fix-fmt-xcode26/fix-fmt-xcode26.js',
   ],
   experiments: {
     typedRoutes: true,

@@ -2,12 +2,19 @@ package com.thepolyfills.getrandomvalues
 
 import android.util.Base64
 import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.bridge.ReactContextBaseJavaModule
+import com.facebook.react.bridge.ReactMethod
 import java.security.SecureRandom
 
 class GetRandomValuesModule(reactContext: ReactApplicationContext) :
-    NativeGetRandomValuesSpec(reactContext) {
+    ReactContextBaseJavaModule(reactContext) {
 
-    override fun getRandomBase64(byteLength: Double): String {
+    override fun getName(): String = NAME
+
+    // Blocking synchronous method so `getRandomBase64` returns the value
+    // directly, matching the synchronous WebCrypto API.
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    fun getRandomBase64(byteLength: Double): String {
         val length = byteLength.toInt()
 
         if (length < 0) {
@@ -25,6 +32,6 @@ class GetRandomValuesModule(reactContext: ReactApplicationContext) :
     }
 
     companion object {
-        const val NAME = NativeGetRandomValuesSpec.NAME
+        const val NAME = "GetRandomValues"
     }
 }

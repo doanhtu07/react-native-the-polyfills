@@ -3,7 +3,13 @@
 
 @implementation GetRandomValues
 
-- (NSString *)getRandomBase64:(double)byteLength {
+RCT_EXPORT_MODULE(GetRandomValues)
+
++ (BOOL)requiresMainQueueSetup {
+    return NO;
+}
+
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(getRandomBase64 : (double)byteLength) {
     NSInteger length = (NSInteger)byteLength;
 
     if (length < 0) {
@@ -24,16 +30,6 @@
     }
 
     return [data base64EncodedStringWithOptions:0];
-}
-
-- (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
-    (const facebook::react::ObjCTurboModule::InitParams &)params {
-    return std::make_shared<facebook::react::NativeGetRandomValuesSpecJSI>(
-        params);
-}
-
-+ (NSString *)moduleName {
-    return @"GetRandomValues";
 }
 
 @end

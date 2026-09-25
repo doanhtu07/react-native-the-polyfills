@@ -1,5 +1,5 @@
-#import <GetRandomValuesSpec/GetRandomValuesSpec.h>
+#import <React/RCTBridgeModule.h>
 
-@interface GetRandomValues : NSObject <NativeGetRandomValuesSpec>
+@interface GetRandomValues : NSObject <RCTBridgeModule>
 
 @end
