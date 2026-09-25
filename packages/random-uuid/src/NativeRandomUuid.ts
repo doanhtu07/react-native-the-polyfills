@@ -5,15 +5,15 @@ import { NativeModules } from 'react-native'
 // There is intentionally no TurboModuleRegistry usage and no codegen spec
 // in this package.
 export interface Spec {
-  getRandomBase64(byteLength: number): string
+  getRandomUuid(): string
 }
 
-export function getNativeGetRandomValues(): Spec | undefined {
-  const native = NativeModules.GetRandomValues as Spec | undefined
+export function getNativeRandomUuid(): Spec | undefined {
+  const native = NativeModules.RandomUuid as Spec | undefined
 
   // Note: loose equality (`== null`) intentionally covers both `null` and
   // `undefined` here.
-  if (native == null || typeof native.getRandomBase64 !== 'function') {
+  if (native == null || typeof native.getRandomUuid !== 'function') {
     return undefined
   }
 

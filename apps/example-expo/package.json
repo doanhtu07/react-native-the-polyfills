@@ -30,6 +30,7 @@
     "@react-navigation/elements": "^2.9.43",
     "@react-navigation/native": "^7.4.1",
     "@the-polyfills/get-random-values": "workspace:*",
+    "@the-polyfills/random-uuid": "workspace:*",
     "expo": "~53.0.27",
     "expo-constants": "~17.1.8",
     "expo-dev-client": "~5.2.4",

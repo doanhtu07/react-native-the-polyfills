@@ -202,6 +202,9 @@ importers:
       '@the-polyfills/get-random-values':
         specifier: workspace:*
         version: link:../../packages/get-random-values
+      '@the-polyfills/random-uuid':
+        specifier: workspace:*
+        version: link:../../packages/random-uuid
       expo:
         specifier: ~53.0.27
         version: 53.0.27(@babel/core@7.29.7(supports-color@5.5.0))(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.16)(babel-plugin-react-compiler@1.0.0)(react-native@0.79.6(@babel/core@7.29.7(supports-color@5.5.0))(@types/react@19.0.14)(react@19.0.0)(supports-color@5.5.0))(react@19.0.0)(supports-color@5.5.0)
@@ -313,6 +316,69 @@ importers:
         version: 5.8.3
 
   packages/get-random-values:
+    devDependencies:
+      '@eslint/compat':
+        specifier: ^2.1.1
+        version: 2.1.1(eslint@10.11.0(jiti@2.6.1)(supports-color@5.5.0))
+      '@eslint/eslintrc':
+        specifier: ^3.3.7
+        version: 3.3.7(supports-color@5.5.0)
+      '@eslint/js':
+        specifier: ^10.0.1
+        version: 10.0.1(eslint@10.11.0(jiti@2.6.1)(supports-color@5.5.0))
+      '@jest/globals':
+        specifier: ^30.5.2
+        version: 30.5.2(supports-color@5.5.0)
+      '@react-native/babel-preset':
+        specifier: 0.87.1
+        version: 0.87.1(@babel/core@7.29.7(supports-color@5.5.0))(supports-color@5.5.0)
+      '@react-native/eslint-config':
+        specifier: 0.87.1
+        version: 0.87.1(eslint@10.11.0(jiti@2.6.1)(supports-color@5.5.0))(jest@30.5.2(@types/node@26.6.2)(supports-color@5.5.0))(prettier@3.9.9)(supports-color@5.5.0)(typescript@5.8.3)
+      '@types/react':
+        specifier: ~19.0.14
+        version: 19.0.14
+      del-cli:
+        specifier: ^7.0.0
+        version: 7.0.0
+      eslint:
+        specifier: ^10.11.0
+        version: 10.11.0(jiti@2.6.1)(supports-color@5.5.0)
+      eslint-config-prettier:
+        specifier: ^10.1.8
+        version: 10.1.8(eslint@10.11.0(jiti@2.6.1)(supports-color@5.5.0))
+      eslint-plugin-ft-flow:
+        specifier: ^3.0.11
+        version: 3.0.11(eslint@10.11.0(jiti@2.6.1)(supports-color@5.5.0))(hermes-eslint@0.37.0(eslint@10.11.0(jiti@2.6.1)(supports-color@5.5.0)))
+      eslint-plugin-prettier:
+        specifier: ^5.5.6
+        version: 5.5.6(eslint-config-prettier@10.1.8(eslint@10.11.0(jiti@2.6.1)(supports-color@5.5.0)))(eslint@10.11.0(jiti@2.6.1)(supports-color@5.5.0))(prettier@3.9.9)
+      jest:
+        specifier: ^30.5.2
+        version: 30.5.2(@types/node@26.6.2)(supports-color@5.5.0)
+      nodemon:
+        specifier: ^3.1.14
+        version: 3.1.14
+      prettier:
+        specifier: ^3.9.9
+        version: 3.9.9
+      react:
+        specifier: 19.0.0
+        version: 19.0.0
+      react-native:
+        specifier: 0.79.6
+        version: 0.79.6(@babel/core@7.29.7(supports-color@5.5.0))(@types/react@19.0.14)(react@19.0.0)(supports-color@5.5.0)
+      react-native-builder-bob:
+        specifier: ^0.43.1
+        version: 0.43.1(supports-color@5.5.0)
+      turbo:
+        specifier: ^2.11.3
+        version: 2.11.3
+      typescript:
+        specifier: ~5.8.3
+        version: 5.8.3
+
+  packages/random-uuid:
     devDependencies:
       '@eslint/compat':
         specifier: ^2.1.1
