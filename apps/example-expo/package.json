@@ -28,6 +28,7 @@
     "@react-native-vector-icons/ant-design": "^13.1.4",
     "@react-native-vector-icons/material-design-icons": "^13.1.4",
     "@the-polyfills/get-random-values": "workspace:*",
+    "@the-polyfills/random-uuid": "workspace:*",
     "expo": "^57.0.24",
     "expo-constants": "~57.0.19",
     "expo-dev-client": "~57.0.19",

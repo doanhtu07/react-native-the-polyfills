@@ -3,14 +3,14 @@ import { TurboModuleRegistry, type TurboModule } from 'react-native'
 let cachedSpec: Spec | null = null
 
 export interface Spec extends TurboModule {
-  getRandomBase64(byteLength: number): string
+  getRandomUuid(): string
 }
 
-export function getNativeGetRandomValues(): Spec {
+export function getNativeRandomUuid(): Spec {
   // Note: loose equality (`== null`) intentionally covers both `null` and
   // `undefined` here.
   if (cachedSpec == null) {
-    cachedSpec = TurboModuleRegistry.getEnforcing<Spec>('GetRandomValues')
+    cachedSpec = TurboModuleRegistry.getEnforcing<Spec>('RandomUuid')
   }
 
   return cachedSpec

@@ -1,10 +1,7 @@
 import type { GetRandomValuesFn } from '@the-polyfills/get-random-values'
+import type { RandomUuidFn } from '@the-polyfills/random-uuid'
 
-interface Crypto {
-  getRandomValues: GetRandomValuesFn
-}
-
-export function getCrypto(): Crypto | null {
+export function getCrypto(): GetRandomValuesFn | null {
   const g = globalThis as any
 
   if (
@@ -12,7 +9,21 @@ export function getCrypto(): Crypto | null {
     g.crypto !== null &&
     typeof g.crypto.getRandomValues === 'function'
   ) {
-    return g.crypto
+    return g.crypto.getRandomValues as GetRandomValuesFn
+  }
+
+  return null
+}
+
+export function getRandomUUID(): RandomUuidFn | null {
+  const g = globalThis as any
+
+  if (
+    typeof g.crypto === 'object' &&
+    g.crypto !== null &&
+    typeof g.crypto.randomUUID === 'function'
+  ) {
+    return g.crypto.randomUUID as RandomUuidFn
   }
 
   return null
