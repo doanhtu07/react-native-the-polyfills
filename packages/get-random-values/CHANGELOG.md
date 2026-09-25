@@ -1,5 +1,11 @@
 # @the-polyfills/get-random-values
 
+## 1.0.2
+
+### Patch Changes
+
+- Adjust linking error
+
 ## 1.0.1
 
 ### Patch Changes
