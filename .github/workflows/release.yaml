@@ -62,6 +62,9 @@ jobs:
           # For manual runs, check out the requested tag's exact source
           # (a push event already runs at the tag ref).
           ref: ${{ env.RELEASE_TAG }}
+          # Full history + all tags: resolving the previous `<slug>-v*` tag
+          # below only works if every per-package tag is present locally.
+          fetch-depth: 0
 
       - name: Verify tag and resolve package
         # Splits `<slug>-v<version>` into its parts, then guards against a
@@ -198,9 +201,22 @@ jobs:
           process.stdout.write(out + '\n');
           EOF
 
-          # Auto-generated changelog notes from the releases API.
-          notes=$(gh api "repos/${GITHUB_REPOSITORY}/releases/generate-notes" \
-            -f tag_name="${RELEASE_TAG}" --jq '.body' || true)
+          # Auto-generated changelog notes from the releases API, scoped to
+          # this package. Without `previous_tag_name` GitHub diffs against
+          # the newest tag repo-wide, which mixes packages (e.g.
+          # `get-random-values-v2.0.1...random-uuid-v2.0.0`). Resolve the
+          # newest `<slug>-v*` tag older than this one instead. Empty on a
+          # package's first release — then the param is omitted on purpose.
+          PREV_TAG=$(git tag --list "${PKG_SLUG}-v*" | sort -V | awk -v cur="$RELEASE_TAG" '$0 == cur { print prev; exit } { prev = $0 }')
+          if [ -n "$PREV_TAG" ]; then
+            echo "Previous tag for ${PKG_SLUG}: ${PREV_TAG}"
+            notes=$(gh api "repos/${GITHUB_REPOSITORY}/releases/generate-notes" \
+              -f tag_name="${RELEASE_TAG}" -f previous_tag_name="$PREV_TAG" --jq '.body' || true)
+          else
+            echo "No previous tag for ${PKG_SLUG} — generating notes without previous_tag_name."
+            notes=$(gh api "repos/${GITHUB_REPOSITORY}/releases/generate-notes" \
+              -f tag_name="${RELEASE_TAG}" --jq '.body' || true)
+          fi
           if [ -n "$notes" ]; then
             printf '\n---\n\n%s\n' "$notes" >> RELEASE_NOTES.md
           fi
