@@ -6,5 +6,5 @@ A collection of polyfills
 
 ## Compatibility
 
-- v1: Old arch
-- v2: New arch
+- v2: New arch (`main`)
+- v1: Old arch (`feat/old-arch-support`)
