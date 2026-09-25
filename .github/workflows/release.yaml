@@ -208,9 +208,10 @@ jobs:
           # the newest `<slug>-v<major>.*` tag that is both older by version
           # and an ancestor of this tag instead — a major bump starts a new
           # line, so `v2.0.0` never diffs against `v1.0.0`. Empty when this
-          # is the first tag on its major line — then the notes block is
-          # skipped entirely (no commit range) rather than letting GitHub
-          # pick a repo-wide tag.
+          # is the first tag on its major line — then there is no range to
+          # compare, so the notes link to the tag's own commit history
+          # (`/commits/<tag>`) instead of letting GitHub pick a repo-wide
+          # tag.
           CUR_SHA=$(git rev-list -n 1 "$RELEASE_TAG")
           CUR_MAJOR="${RELEASE_TAG##*-v}"
           CUR_MAJOR="${CUR_MAJOR%%.*}"
@@ -238,7 +239,9 @@ jobs:
               printf '\n---\n\n%s\n' "$notes" >> RELEASE_NOTES.md
             fi
           else
-            echo "No previous ${PKG_SLUG} v${CUR_MAJOR}.x tag — skipping auto-generated notes (no commit range)."
+            echo "No previous ${PKG_SLUG} v${CUR_MAJOR}.x tag — linking to this tag's commit history."
+            notes="Full Changelog: https://github.com/${GITHUB_REPOSITORY}/commits/${RELEASE_TAG}"
+            printf '\n---\n\n%s\n' "$notes" >> RELEASE_NOTES.md
           fi
           cat RELEASE_NOTES.md
         env:
