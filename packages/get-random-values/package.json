@@ -1,6 +1,6 @@
 {
   "name": "@the-polyfills/get-random-values",
-  "version": "0.1.0",
+  "version": "2.0.0",
   "description": "Polyfill for crypto.getRandomValues in React Native",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
