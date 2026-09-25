@@ -3,8 +3,10 @@
 A collection of polyfills
 
 - `crypto.getRandomValues`: `@the-polyfills/get-random-values`
-  - https://www.npmjs.com/package/@the-polyfills/get-random-values/v/2.0.0
-  - https://www.npmjs.com/package/@the-polyfills/get-random-values/v/1.0.1
+  - Learn from https://github.com/LinusU/react-native-get-random-values
+  - Versions:
+    - https://www.npmjs.com/package/@the-polyfills/get-random-values/v/2.0.0
+    - https://www.npmjs.com/package/@the-polyfills/get-random-values/v/1.0.1
 
 ## Compatibility
 
