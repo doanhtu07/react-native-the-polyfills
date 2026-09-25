@@ -1,0 +1,229 @@
+name: Release
+
+# Builds ONE @the-polyfills/* library and publishes it twice from a single
+# `<slug>-v<version>` tag (e.g. `get-random-values-v0.1.0`):
+#   1. npm registry (registry.npmjs.org) under the channel's dist-tag, and
+#   2. a tarball attached to the GitHub Release.
+# Consumers normally install by name + semver; the tarball is a fallback that
+# needs no registry setup. Nothing compiled (`lib/`) is ever committed — both
+# artifacts are built in CI from the tagged source.
+#
+# Unlike the-sheet (lockstep `fixed` group, one `v<version>` tag for every
+# package), each polyfill versions, tags, and ships independently: pushing
+# `get-random-values-v0.2.0` releases only that package. Pushing several tags
+# releases several packages as separate runs / separate GitHub Releases.
+#
+# Three channels per package, all driven by the tag name — the workflow is
+# branch-agnostic because it always checks out the tag ref, so a release can be
+# cut from any branch:
+#   <slug>-v1.2.0-alpha.N → QA   → npm dist-tag `alpha`, GitHub pre-release
+#   <slug>-v1.2.0-beta.N  → UAT  → npm dist-tag `beta`,  GitHub pre-release
+#   <slug>-v1.2.0         → prod → npm dist-tag `latest`, full GitHub release
+#
+# Auth is OIDC trusted publishing — no long-lived npm token is stored. Each
+# @the-polyfills/* package needs a trusted publisher on npmjs.com pointing at
+# this repo + workflow file with `npm publish` allowed (see
+# docs/resources/publish-npm-package.md).
+
+on:
+  push:
+    tags:
+      # Per-package tags only — a bare `v*` tag matches nothing on purpose so a
+      # lockstep-style tag can never slip through and publish everything.
+      - '*-v*'
+
+  # Manual fallback: if a tag push didn't trigger a run (or a run failed),
+  # release any existing tag from the Actions tab → "Run workflow".
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing tag to (re)build and release, e.g. get-random-values-v0.1.0'
+        required: true
+        type: string
+
+# Resolve the target tag once: the pushed tag, or the manually entered one.
+env:
+  RELEASE_TAG: ${{ github.event.inputs.tag || github.ref_name }}
+
+concurrency:
+  group: release-${{ github.event.inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write # create the Release and upload tarball assets
+  id-token: write # OIDC trusted publishing to the npm registry
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # For manual runs, check out the requested tag's exact source
+          # (a push event already runs at the tag ref).
+          ref: ${{ env.RELEASE_TAG }}
+
+      - name: Verify tag and resolve package
+        # Splits `<slug>-v<version>` into its parts, then guards against a
+        # typo'd tag, an unknown slug, and a tag/version mismatch (the version
+        # bump must be committed before tagging — see `pnpm release:tag`).
+        # Mirrors scripts/release-channel.mjs — keep the two in sync.
+        run: |
+          if [[ "$RELEASE_TAG" != *-v* ]]; then
+            echo "::error::Tag '${RELEASE_TAG}' is not a per-package tag. Expected <slug>-v<version>, e.g. get-random-values-v0.1.0."
+            exit 1
+          fi
+          pkg_slug="${RELEASE_TAG%-v*}"
+          version="${RELEASE_TAG##*-v}"
+          if [ -z "$pkg_slug" ] || [ -z "$version" ]; then
+            echo "::error::Could not parse tag '${RELEASE_TAG}'. Expected <slug>-v<version>."
+            exit 1
+          fi
+          pkg_dir="packages/${pkg_slug}"
+          if [ ! -f "${pkg_dir}/package.json" ]; then
+            echo "::error::Unknown package slug '${pkg_slug}' in tag '${RELEASE_TAG}'. No ${pkg_dir}/package.json."
+            exit 1
+          fi
+          if ! git rev-parse -q --verify "refs/tags/${RELEASE_TAG}" >/dev/null; then
+            echo "::error::Tag '${RELEASE_TAG}' does not exist."
+            exit 1
+          fi
+          pkg_version=$(node -e "console.log(JSON.parse(require('fs').readFileSync('${pkg_dir}/package.json','utf8')).version)")
+          if [ "$pkg_version" != "$version" ]; then
+            echo "::error::Tag version '${version}' does not match ${pkg_dir}/package.json version '${pkg_version}'. Commit the \`changeset version\` bump before tagging."
+            exit 1
+          fi
+          case "$version" in
+            *-alpha.*) channel=alpha ;;
+            *-beta.*)  channel=beta ;;
+            *-*)
+              echo "::error::Unsupported prerelease tag '${RELEASE_TAG}'. Use -alpha.N (QA) or -beta.N (UAT)."
+              exit 1
+              ;;
+            *)         channel=latest ;;
+          esac
+          if [ "$channel" = latest ]; then prerelease=false; else prerelease=true; fi
+          {
+            echo "PKG_SLUG=$pkg_slug"
+            echo "PKG_DIR=$pkg_dir"
+            echo "PKG_VERSION=$version"
+            echo "NPM_TAG=$channel"
+            echo "PRERELEASE=$prerelease"
+          } >> "$GITHUB_ENV"
+          echo "Releasing ${pkg_dir} @ ${version} (npm dist-tag: $channel | GitHub pre-release: $prerelease)"
+
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 12.6.0
+          run_install: false
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: 'pnpm'
+          # Default registry for publishing. Auth itself comes from OIDC
+          # (trusted publishing) — no NODE_AUTH_TOKEN is set on purpose.
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Build package
+        # `prepare` runs bob build (src → lib). Only the tagged package is
+        # built — polyfills don't depend on each other, so no tiers needed.
+        run: pnpm --filter "./${PKG_DIR}" run prepare
+
+      - name: Pack package
+        # `pnpm pack` respects the package.json "files" field, so the tarball
+        # contains exactly what a publish would (src + lib + native sources).
+        # The tarball keeps the name pnpm gives it —
+        # `the-polyfills-<slug>-<version>.tgz` — so a downloaded asset
+        # identifies its own package and version without renaming.
+        run: |
+          mkdir -p .release-assets
+          (cd "${PKG_DIR}" && pnpm pack --pack-destination "$GITHUB_WORKSPACE/.release-assets")
+          ls -la .release-assets
+
+      - name: Publish to npm
+        # Publishes the tagged package so consumers can
+        # `npm i @the-polyfills/<slug>@<version>` with a semver range.
+        # Auth is OIDC: the npm CLI detects the trusted-publisher environment
+        # automatically (requires `id-token: write` above and a trusted
+        # publisher configured per package on npmjs.com).
+        # --no-git-checks skips the clean-tree / branch guards that don't apply
+        # in a tag-triggered CI build.
+        # --tag pins the dist-tag to the channel resolved above, so alpha/beta
+        # builds are installable by name but never become `latest`.
+        # Idempotent: a re-run of an already-published version is tolerated so
+        # a manual re-release (e.g. to fix a tarball) doesn't fail the job.
+        run: |
+          echo "Publishing ${PKG_DIR} under dist-tag '${NPM_TAG}' …"
+          if ! pnpm --filter "./${PKG_DIR}" publish --tag "$NPM_TAG" --no-git-checks 2>&1 | tee /tmp/pub.log; then
+            if grep -q -e 'EPUBLISHCONFLICT' -e 'already exists' -e 'cannot publish over' /tmp/pub.log; then
+              echo "::warning::${PKG_DIR} version already published — skipping."
+            else
+              echo "::error::Failed to publish ${PKG_DIR}"
+              exit 1
+            fi
+          fi
+
+      - name: Assemble release notes
+        # The package's peer-dependency summary, followed by GitHub's own
+        # auto-generated notes (fetched via the first-party releases API
+        # through gh).
+        run: |
+          : > RELEASE_NOTES.md
+          if [ "$PRERELEASE" = true ]; then
+            {
+              printf '> **%s pre-release of `%s`** — install with the `%s` dist-tag:\n>\n' \
+                "$([ "$NPM_TAG" = alpha ] && echo QA || echo UAT)" "$PKG_SLUG" "$NPM_TAG"
+              printf '> ```sh\n> npm i @the-polyfills/%s@%s\n> ```\n>\n' "$PKG_SLUG" "$NPM_TAG"
+              printf '> Not published to `latest`. Do not ship to production.\n\n'
+            } >> RELEASE_NOTES.md
+          fi
+
+          node --input-type=module <<EOF >> RELEASE_NOTES.md
+          import { readFileSync } from 'node:fs';
+          const p = JSON.parse(readFileSync(`${process.env.PKG_DIR}/package.json`, 'utf8'));
+          const peers = p.peerDependencies ?? {};
+          let out = '## Peer dependencies\n\n';
+          out += `\`${p.name}\` — v${p.version} expects these to be installed by the consumer:\n\n`;
+          const keys = Object.keys(peers);
+          if (keys.length === 0) {
+            out += '_No peer dependencies._\n';
+          } else {
+            for (const k of keys) out += `- \`${k}\`: \`${peers[k]}\`\n`;
+          }
+          process.stdout.write(out + '\n');
+          EOF
+
+          # Auto-generated changelog notes from the releases API.
+          notes=$(gh api "repos/${GITHUB_REPOSITORY}/releases/generate-notes" \
+            -f tag_name="${RELEASE_TAG}" --jq '.body' || true)
+          if [ -n "$notes" ]; then
+            printf '\n---\n\n%s\n' "$notes" >> RELEASE_NOTES.md
+          fi
+          cat RELEASE_NOTES.md
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish release
+        # Idempotent: create the release, or update it (and overwrite assets)
+        # if a manual re-run targets an existing tag.
+        # alpha/beta tags are flagged as pre-releases so GitHub keeps "Latest
+        # release" pointing at the newest stable tag.
+        run: |
+          if gh release view "${RELEASE_TAG}" >/dev/null 2>&1; then
+            gh release edit "${RELEASE_TAG}" \
+              --notes-file RELEASE_NOTES.md \
+              --prerelease="${PRERELEASE}"
+            gh release upload "${RELEASE_TAG}" .release-assets/*.tgz --clobber
+          else
+            gh release create "${RELEASE_TAG}" .release-assets/*.tgz \
+              --title "${RELEASE_TAG}" \
+              --notes-file RELEASE_NOTES.md \
+              --prerelease="${PRERELEASE}" \
+              --verify-tag
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

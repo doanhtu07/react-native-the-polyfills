@@ -11,9 +11,12 @@
   "scripts": {
     "prepare": "husky",
     "typecheck": "pnpm -r --parallel typecheck",
-    "test": "pnpm -r --parallel test"
+    "test": "pnpm -r --parallel test",
+    "release:version": "changeset version",
+    "release:tag": "node scripts/tag-release.mjs"
   },
   "devDependencies": {
+    "@changesets/cli": "^3.0.3",
     "@commitlint/cli": "^21.2.3",
     "@commitlint/config-conventional": "^21.2.3",
     "husky": "^9.1.7",
