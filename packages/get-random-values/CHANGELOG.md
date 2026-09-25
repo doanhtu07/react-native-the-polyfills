@@ -4,7 +4,7 @@
 
 ### Patch Changes
 
-- Updates link error
+- Add comments
 
 ## 2.0.0
 

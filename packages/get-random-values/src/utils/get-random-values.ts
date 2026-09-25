@@ -1,5 +1,3 @@
-import { Platform } from 'react-native'
-
 import { MAX_BYTE_LENGTH } from '../constants'
 import { getNativeGetRandomValues } from '../NativeGetRandomValues'
 import { base64ToBytes } from './base64-decode'
@@ -22,20 +20,6 @@ function isAllowedArray(value: unknown): value is ArrayBufferView {
     value instanceof Uint32Array ||
     value instanceof BigInt64Array ||
     value instanceof BigUint64Array
-  )
-}
-
-function getLinkingError(): Error {
-  const iosHint = Platform.select({
-    ios: "- You have run 'pod install'\n",
-    default: '',
-  })
-
-  return new Error(
-    `The package '@the-polyfills/get-random-values' doesn't seem to be linked. Make sure:\n\n` +
-      iosHint +
-      '- You rebuilt the app after installing the package\n' +
-      '- You are not using Expo Go (this package requires a dev client or prebuild)',
   )
 }
 
@@ -83,13 +67,6 @@ export function getRandomValues<T extends ArrayBufferView>(array: T): T {
 
   // 3. Our own native module (blocking sync `getRandomBase64`).
   const native = getNativeGetRandomValues()
-
-  // Note: loose equality (`== null`) intentionally covers both `null` and
-  // `undefined` here.
-  if (native == null) {
-    throw getLinkingError()
-  }
-
   const base64 = native.getRandomBase64(array.byteLength)
   const bytes = base64ToBytes(base64)
 
