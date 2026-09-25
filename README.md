@@ -6,5 +6,10 @@ A collection of polyfills
 
 ## Compatibility
 
-- v2: New arch (`main`)
-- v1: Old arch (`feat/old-arch-support`)
+**Major version 2**: New arch (`main`)
+
+- https://www.npmjs.com/package/@the-polyfills/get-random-values/v/2.0.0
+
+**Major version 1**: Old arch (`feat/old-arch-support`)
+
+- https://www.npmjs.com/package/@the-polyfills/get-random-values/v/1.0.1
