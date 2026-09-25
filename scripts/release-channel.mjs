@@ -23,6 +23,10 @@ export const PACKAGES = {
     dir: 'packages/get-random-values',
     npm: '@the-polyfills/get-random-values',
   },
+  'random-uuid': {
+    dir: 'packages/random-uuid',
+    npm: '@the-polyfills/random-uuid',
+  },
 }
 
 const CHANNEL = /^\d+\.\d+\.\d+(?:-(alpha|beta)\.\d+)?$/
