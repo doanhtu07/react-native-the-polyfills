@@ -27,9 +27,9 @@ export const PACKAGES = {
     dir: 'packages/random-uuid',
     npm: '@the-polyfills/random-uuid',
   },
-  'streaming-fetch': {
-    dir: 'packages/streaming-fetch',
-    npm: '@the-polyfills/streaming-fetch',
+  'fetch-sse': {
+    dir: 'packages/fetch-sse',
+    npm: '@the-polyfills/fetch-sse',
   },
 }
 

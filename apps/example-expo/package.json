@@ -30,7 +30,7 @@
     "@react-native-vector-icons/material-design-icons": "^13.1.4",
     "@the-polyfills/get-random-values": "workspace:*",
     "@the-polyfills/random-uuid": "workspace:*",
-    "@the-polyfills/streaming-fetch": "workspace:*",
+    "@the-polyfills/fetch-sse": "workspace:*",
     "expo": "^57.0.27",
     "expo-constants": "~57.0.21",
     "expo-dev-client": "~57.0.19",

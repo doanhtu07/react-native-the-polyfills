@@ -2,7 +2,7 @@ import {
   readSse,
   type SseEvent,
   xhrStreamingFetch,
-} from '@the-polyfills/streaming-fetch'
+} from '@the-polyfills/fetch-sse'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import {
@@ -63,7 +63,7 @@ const MAX_LOGGED_EVENTS = 50
 
 const MAX_DATA_PREVIEW = 300
 
-export default function StreamingFetch() {
+export default function FetchSse() {
   const [endpoint, setEndpoint] = useState(ENDPOINTS[0])
   const [fetchImpl, setFetchImpl] = useState<FetchImpl>('xhrStreamingFetch')
   const [status, setStatus] = useState<RunStatus>('idle')
@@ -186,7 +186,7 @@ export default function StreamingFetch() {
       style={styles.root}
       contentContainerStyle={styles.contentContainer}
     >
-      <Text style={styles.header}>streaming-fetch</Text>
+      <Text style={styles.header}>fetch-sse</Text>
 
       <Text style={styles.subheader}>
         Streams Server-Sent Events with xhrStreamingFetch + readSse. Switch to

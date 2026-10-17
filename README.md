@@ -14,10 +14,10 @@ A collection of polyfills
     - https://www.npmjs.com/package/@the-polyfills/random-uuid/v/2.0.0
     - https://www.npmjs.com/package/@the-polyfills/random-uuid/v/1.0.0
 
-- Streaming `fetch` over `XMLHttpRequest` + SSE reader: `@the-polyfills/streaming-fetch`
+- Streaming `fetch` over `XMLHttpRequest` + SSE reader: `@the-polyfills/fetch-sse`
   - Not depending on `react` or `react-native`
   - Versions:
-    - https://www.npmjs.com/package/@the-polyfills/streaming-fetch/v/2.1.0
+    - https://www.npmjs.com/package/@the-polyfills/fetch-sse/v/1.0.0
 
 ## Compatibility
 

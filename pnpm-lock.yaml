@@ -193,15 +193,15 @@ importers:
       '@react-native-vector-icons/material-design-icons':
         specifier: ^13.1.4
         version: 13.1.4(@expo/config-plugins@57.0.9(supports-color@5.5.0)(typescript@6.0.3))(@react-native/assets-registry@0.86.3)(expo-font@57.0.4)(react-native@0.86.3(@babel/core@7.29.7(supports-color@5.5.0))(@react-native/jest-preset@0.86.3(@babel/core@7.29.7(supports-color@5.5.0))(react@19.2.3)(supports-color@5.5.0))(@react-native/metro-config@0.87.1(@babel/core@7.29.7(supports-color@5.5.0))(supports-color@5.5.0))(@types/react@19.2.18)(react@19.2.3)(supports-color@5.5.0))(react@19.2.3)
+      '@the-polyfills/fetch-sse':
+        specifier: workspace:*
+        version: link:../../packages/fetch-sse
       '@the-polyfills/get-random-values':
         specifier: workspace:*
         version: link:../../packages/get-random-values
       '@the-polyfills/random-uuid':
         specifier: workspace:*
         version: link:../../packages/random-uuid
-      '@the-polyfills/streaming-fetch':
-        specifier: workspace:*
-        version: link:../../packages/streaming-fetch
       expo:
         specifier: ^57.0.27
         version: 57.0.27(547b36d267a01ac98765dfc2fc41615f)
@@ -308,6 +308,36 @@ importers:
       typescript:
         specifier: ~6.0.3
         version: 6.0.3
+
+  packages/fetch-sse:
+    devDependencies:
+      '@eslint/js':
+        specifier: ^10.0.1
+        version: 10.0.1(eslint@10.11.0(jiti@2.6.1)(supports-color@5.5.0))
+      '@types/node':
+        specifier: ^24.19.2
+        version: 24.19.2
+      del-cli:
+        specifier: ^7.0.0
+        version: 7.0.0
+      eslint:
+        specifier: ^10.11.0
+        version: 10.11.0(jiti@2.6.1)(supports-color@5.5.0)
+      eslint-plugin-prettier:
+        specifier: ^5.5.6
+        version: 5.5.6(eslint-config-prettier@10.1.8(eslint@10.11.0(jiti@2.6.1)(supports-color@5.5.0)))(eslint@10.11.0(jiti@2.6.1)(supports-color@5.5.0))(prettier@3.9.9)
+      prettier:
+        specifier: ^3.9.9
+        version: 3.9.9
+      tsx:
+        specifier: ^4.23.1
+        version: 4.23.15
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+      typescript-eslint:
+        specifier: ^8.59.2
+        version: 8.71.2(eslint@10.11.0(jiti@2.6.1)(supports-color@5.5.0))(supports-color@5.5.0)(typescript@6.0.3)
 
   packages/get-random-values:
     devDependencies:
@@ -440,36 +470,6 @@ importers:
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
-
-  packages/streaming-fetch:
-    devDependencies:
-      '@eslint/js':
-        specifier: ^10.0.1
-        version: 10.0.1(eslint@10.11.0(jiti@2.6.1)(supports-color@5.5.0))
-      '@types/node':
-        specifier: ^24.19.2
-        version: 24.19.2
-      del-cli:
-        specifier: ^7.0.0
-        version: 7.0.0
-      eslint:
-        specifier: ^10.11.0
-        version: 10.11.0(jiti@2.6.1)(supports-color@5.5.0)
-      eslint-plugin-prettier:
-        specifier: ^5.5.6
-        version: 5.5.6(eslint-config-prettier@10.1.8(eslint@10.11.0(jiti@2.6.1)(supports-color@5.5.0)))(eslint@10.11.0(jiti@2.6.1)(supports-color@5.5.0))(prettier@3.9.9)
-      prettier:
-        specifier: ^3.9.9
-        version: 3.9.9
-      tsx:
-        specifier: ^4.23.1
-        version: 4.23.15
-      typescript:
-        specifier: ^6.0.3
-        version: 6.0.3
-      typescript-eslint:
-        specifier: ^8.59.2
-        version: 8.71.2(eslint@10.11.0(jiti@2.6.1)(supports-color@5.5.0))(supports-color@5.5.0)(typescript@6.0.3)
 
 packages:
 

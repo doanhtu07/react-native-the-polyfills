@@ -1,4 +1,4 @@
-// Local SSE server for the streaming-fetch screen: `node scripts/sse-server.mjs`
+// Local SSE server for the fetch-sse screen: `node scripts/sse-server.mjs`
 //
 // Sends 10 `tick` events 500ms apart, then ends the stream. Each event has an
 // `id`, a multi-line `data`, and the first one a `retry`, so the screen can
