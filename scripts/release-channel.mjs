@@ -27,6 +27,10 @@ export const PACKAGES = {
     dir: 'packages/random-uuid',
     npm: '@the-polyfills/random-uuid',
   },
+  'streaming-fetch': {
+    dir: 'packages/streaming-fetch',
+    npm: '@the-polyfills/streaming-fetch',
+  },
 }
 
 const CHANNEL = /^\d+\.\d+\.\d+(?:-(alpha|beta)\.\d+)?$/

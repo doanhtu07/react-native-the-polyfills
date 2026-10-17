@@ -1,0 +1,10 @@
+{
+  "codegenConfig": {
+    "name": "StreamingFetchSpec",
+    "type": "modules",
+    "jsSrcsDir": "src",
+    "android": {
+      "javaPackageName": "com.thepolyfills.streamingfetch"
+    }
+  }
+}

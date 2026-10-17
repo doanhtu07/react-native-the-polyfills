@@ -3,7 +3,7 @@ import { Link } from 'expo-router'
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 
 interface PolyfillEntry {
-  href: '/get-random-values' | '/random-uuid'
+  href: '/get-random-values' | '/random-uuid' | '/streaming-fetch'
   title: string
   api: string
   description: string
@@ -22,6 +22,13 @@ const POLYFILLS: PolyfillEntry[] = [
     title: 'random-uuid',
     api: 'crypto.randomUUID',
     description: 'Generates a lowercase RFC 4122 v4 UUID string',
+  },
+  {
+    href: '/streaming-fetch',
+    title: 'streaming-fetch',
+    api: 'xhrStreamingFetch + readSse',
+    description:
+      'Streams Server-Sent Events from a live endpoint as they arrive',
   },
 ]
 
