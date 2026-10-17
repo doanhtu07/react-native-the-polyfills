@@ -2,7 +2,7 @@ import {
   createSseParser,
   type SseEvent,
   type SseParserOptions,
-} from './create-sse-parser'
+} from './create-sse-parser.js'
 
 type Utf8Decoder = {
   decode(input?: Uint8Array, options?: { stream?: boolean }): string

@@ -5,7 +5,7 @@ name: Release
 #   1. npm registry (registry.npmjs.org) under the channel's dist-tag, and
 #   2. a tarball attached to the GitHub Release.
 # Consumers normally install by name + semver; the tarball is a fallback that
-# needs no registry setup. Nothing compiled (`lib/`) is ever committed — both
+# needs no registry setup. Nothing compiled (`lib/` or `dist/`) is ever committed — both
 # artifacts are built in CI from the tagged source.
 #
 # Unlike the-sheet (lockstep `fixed` group, one `v<version>` tag for every
@@ -132,13 +132,13 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build package
-        # `prepare` runs bob build (src → lib). Only the tagged package is
+        # `prepare` builds src → lib (bob) or src → dist (tsc). Only the tagged package is
         # built — polyfills don't depend on each other, so no tiers needed.
         run: pnpm --filter "./${PKG_DIR}" run prepare
 
       - name: Pack package
         # `pnpm pack` respects the package.json "files" field, so the tarball
-        # contains exactly what a publish would (src + lib + native sources).
+        # contains exactly what a publish would (src + lib/dist + native sources).
         # The tarball keeps the name pnpm gives it —
         # `the-polyfills-<slug>-<version>.tgz` — so a downloaded asset
         # identifies its own package and version without renaming.

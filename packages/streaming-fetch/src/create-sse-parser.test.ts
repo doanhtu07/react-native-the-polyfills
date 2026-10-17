@@ -1,9 +1,10 @@
-import { describe, expect, it } from '@jest/globals'
+import assert from 'node:assert/strict'
+import { describe, it } from 'node:test'
 import {
   createSseParser,
   type SseEvent,
   type SseParserOptions,
-} from '../create-sse-parser'
+} from './create-sse-parser.js'
 
 function parseAll(chunks: string[], options?: SseParserOptions) {
   const events: SseEvent[] = []
@@ -51,71 +52,80 @@ describe('createSseParser', () => {
   it('parses spaced framing and drops comments', () => {
     const events = parseAll([SPACED])
 
-    expect(events.map((e) => e.event)).toEqual(['message', 'message', 'done'])
-    expect(JSON.parse(events[0]!.data).text).toBe('Hello')
-    expect(events[2]!.data).toBe('Stream completed')
+    assert.deepEqual(
+      events.map((e) => e.event),
+      ['message', 'message', 'done'],
+    )
+    assert.equal(JSON.parse(events[0]!.data).text, 'Hello')
+    assert.equal(events[2]!.data, 'Stream completed')
   })
 
   it('parses framing without a space after the colon', () => {
     const events = parseAll([COMPACT])
 
-    expect(events.map((e) => [e.event, e.id])).toEqual([
-      ['message', '0'],
-      ['message', '1'],
-      ['done', '2'],
-    ])
-    expect(JSON.parse(events[1]!.data).done).toBe(true)
+    assert.deepEqual(
+      events.map((e) => [e.event, e.id]),
+      [
+        ['message', '0'],
+        ['message', '1'],
+        ['done', '2'],
+      ],
+    )
+    assert.equal(JSON.parse(events[1]!.data).done, true)
   })
 
   it('handles chunks split anywhere, including inside CRLF', () => {
     const crlf = SPACED.split('\n').join('\r\n')
     const chunks = crlf.match(/[\s\S]{1,7}/g)!
 
-    expect(parseAll(chunks)).toEqual(parseAll([SPACED]))
+    assert.deepEqual(parseAll(chunks), parseAll([SPACED]))
   })
 
   it('treats a lone CR as a line ending', () => {
-    expect(parseAll(['data: a\r\rdata: b\r\r'])).toEqual([
+    assert.deepEqual(parseAll(['data: a\r\rdata: b\r\r']), [
       { event: 'message', data: 'a', id: undefined },
       { event: 'message', data: 'b', id: undefined },
     ])
   })
 
   it('joins multi-line data and defaults the event name', () => {
-    expect(parseAll(['data: a\ndata: b\n\n'])).toEqual([
+    assert.deepEqual(parseAll(['data: a\ndata: b\n\n']), [
       { event: 'message', data: 'a\nb', id: undefined },
     ])
   })
 
   it('flushes a final event with no trailing blank line', () => {
-    expect(parseAll(['event: done\ndata: end'])).toEqual([
+    assert.deepEqual(parseAll(['event: done\ndata: end']), [
       { event: 'done', data: 'end', id: undefined },
     ])
   })
 
   it('skips events with no data', () => {
-    expect(parseAll(['event: ping\n\ndata: x\n\n'])).toEqual([
+    assert.deepEqual(parseAll(['event: ping\n\ndata: x\n\n']), [
       { event: 'message', data: 'x', id: undefined },
     ])
   })
 
   it('drops a leading BOM, even in its own chunk', () => {
-    expect(parseAll(['﻿data: a\n\n'])).toEqual(parseAll(['data: a\n\n']))
-    expect(parseAll(['', '﻿', 'data: a\n\n'])).toEqual(
+    assert.deepEqual(parseAll(['﻿data: a\n\n']), parseAll(['data: a\n\n']))
+    assert.deepEqual(
+      parseAll(['', '﻿', 'data: a\n\n']),
       parseAll(['data: a\n\n']),
     )
   })
 
   it('carries the last id over to later events', () => {
-    expect(
+    assert.deepEqual(
       parseAll(['id: 7\ndata: a\n\ndata: b\n\n']).map((e) => e.id),
-    ).toEqual(['7', '7'])
+      ['7', '7'],
+    )
   })
 
   it('ignores an id containing NUL', () => {
-    expect(
+    assert.deepEqual(
       parseAll(['id: 1\ndata: a\n\nid: 2\0\ndata: b\n\n']).map((e) => e.id),
-    ).toEqual(['1', '1'])
+      ['1', '1'],
+    )
   })
 
   it('reports numeric retry values only', () => {
@@ -125,6 +135,6 @@ describe('createSseParser', () => {
       onRetry: (r) => retries.push(r),
     })
 
-    expect(retries).toEqual([3000, 500])
+    assert.deepEqual(retries, [3000, 500])
   })
 })
