@@ -15,6 +15,11 @@ export default function RootLayout() {
           />
 
           <Stack.Screen name="random-uuid" options={{ title: 'random-uuid' }} />
+
+          <Stack.Screen
+            name="streaming-fetch"
+            options={{ title: 'streaming-fetch' }}
+          />
         </Stack>
       </GestureHandlerRootView>
     </SafeAreaProvider>

@@ -14,6 +14,11 @@ A collection of polyfills
     - https://www.npmjs.com/package/@the-polyfills/random-uuid/v/2.0.0
     - https://www.npmjs.com/package/@the-polyfills/random-uuid/v/1.0.0
 
+- Streaming `fetch` over `XMLHttpRequest` + SSE reader: `@the-polyfills/streaming-fetch`
+  - Versions:
+    - https://www.npmjs.com/package/@the-polyfills/streaming-fetch/v/2.0.0
+    - https://www.npmjs.com/package/@the-polyfills/streaming-fetch/v/1.0.0
+
 ## Compatibility
 
 - **Major version 2**: New arch (`main`)
