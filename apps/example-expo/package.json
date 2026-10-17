@@ -33,7 +33,7 @@
     "@the-polyfills/get-random-values": "workspace:*",
     "@the-polyfills/random-uuid": "workspace:*",
     "@the-polyfills/fetch-sse": "workspace:*",
-    "expo": "~53.0.27",
+    "expo": "~58.0.9",
     "expo-constants": "~17.1.8",
     "expo-dev-client": "~5.2.4",
     "expo-font": "~13.3.2",
