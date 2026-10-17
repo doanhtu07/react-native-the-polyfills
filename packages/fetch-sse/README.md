@@ -1,4 +1,4 @@
-# @the-polyfills/streaming-fetch
+# @the-polyfills/fetch-sse
 
 Streaming `fetch` over `XMLHttpRequest` for React Native, with a Server-Sent Events (SSE) reader. Plain TypeScript with no dependencies, so it works in browsers too.
 
@@ -9,7 +9,7 @@ Unlike an `EventSource` polyfill, this works with any method, body and headers, 
 ## Usage
 
 ```ts
-import { readSse, xhrStreamingFetch } from '@the-polyfills/streaming-fetch'
+import { readSse, xhrStreamingFetch } from '@the-polyfills/fetch-sse'
 
 const controller = new AbortController()
 
@@ -37,7 +37,7 @@ for await (const { event, data, id } of readSse(response)) {
 Feed text yourself, e.g. from a WebSocket or a custom transport:
 
 ```ts
-import { createSseParser } from '@the-polyfills/streaming-fetch'
+import { createSseParser } from '@the-polyfills/fetch-sse'
 
 const parser = createSseParser((e) => console.log(e.event, e.data), {
   onRetry: (ms) => console.log('server asks to reconnect after', ms),

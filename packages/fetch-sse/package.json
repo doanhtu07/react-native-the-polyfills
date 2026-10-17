@@ -1,6 +1,6 @@
 {
-  "name": "@the-polyfills/streaming-fetch",
-  "version": "2.1.0",
+  "name": "@the-polyfills/fetch-sse",
+  "version": "1.0.0",
   "description": "Streaming fetch over XMLHttpRequest, with a Server-Sent Events reader. Built for React Native, works in browsers",
   "type": "module",
   "main": "./dist/index.js",
