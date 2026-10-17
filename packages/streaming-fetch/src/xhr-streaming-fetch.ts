@@ -1,5 +1,3 @@
-/// <reference types="react-native" />
-
 type ReadResult =
   { done: true; value: undefined } | { done: false; value: string }
 

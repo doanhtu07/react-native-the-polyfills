@@ -1,6 +1,7 @@
-import { describe, expect, it } from '@jest/globals'
-import type { SseParserOptions } from '../create-sse-parser'
-import { readSse } from '../read-sse'
+import assert from 'node:assert/strict'
+import { describe, it } from 'node:test'
+import type { SseParserOptions } from './create-sse-parser.js'
+import { readSse } from './read-sse.js'
 
 /** A minimal `Response` whose body hands out `chunks` one `read()` at a time. */
 function streamingResponse(chunks: Array<string | Uint8Array>) {
@@ -48,11 +49,11 @@ describe('readSse', () => {
       'ta: 2\n\n',
     ])
 
-    expect(await collect(response)).toEqual([
+    assert.deepEqual(await collect(response), [
       { event: 'a', data: '1', id: undefined },
       { event: 'message', data: '2', id: undefined },
     ])
-    expect(state).toEqual({ cancelled: false, released: true })
+    assert.deepEqual(state, { cancelled: false, released: true })
   })
 
   it('decodes byte chunks, including a character split across them', async () => {
@@ -63,7 +64,7 @@ describe('readSse', () => {
       bytes.slice(split),
     ])
 
-    expect(await collect(response)).toEqual([
+    assert.deepEqual(await collect(response), [
       { event: 'message', data: 'héllo', id: undefined },
     ])
   })
@@ -72,9 +73,9 @@ describe('readSse', () => {
     const { response } = streamingResponse(['data: 1\n\n', 'data: 2\n\n'])
     const iterator = readSse(response)
 
-    expect((await iterator.next()).value?.data).toBe('1')
-    expect((await iterator.next()).value?.data).toBe('2')
-    expect((await iterator.next()).done).toBe(true)
+    assert.equal((await iterator.next()).value?.data, '1')
+    assert.equal((await iterator.next()).value?.data, '2')
+    assert.equal((await iterator.next()).done, true)
   })
 
   it('falls back to text() when the response has no body', async () => {
@@ -83,7 +84,10 @@ describe('readSse', () => {
       text: async () => 'data: a\n\ndata: b',
     } as unknown as Response
 
-    expect((await collect(response)).map((e) => e.data)).toEqual(['a', 'b'])
+    assert.deepEqual(
+      (await collect(response)).map((e) => e.data),
+      ['a', 'b'],
+    )
   })
 
   it('cancels the body when the consumer stops early', async () => {
@@ -93,11 +97,11 @@ describe('readSse', () => {
     ])
 
     for await (const event of readSse(response)) {
-      expect(event.data).toBe('1')
+      assert.equal(event.data, '1')
       break
     }
 
-    expect(state).toEqual({ cancelled: true, released: true })
+    assert.deepEqual(state, { cancelled: true, released: true })
   })
 
   it('throws a clear error for byte chunks without TextDecoder', async () => {
@@ -108,8 +112,8 @@ describe('readSse', () => {
     try {
       const { response, state } = streamingResponse([utf8('data: x\n\n')])
 
-      await expect(collect(response)).rejects.toThrow('TextDecoder')
-      expect(state.cancelled).toBe(true)
+      await assert.rejects(collect(response), /TextDecoder/)
+      assert.equal(state.cancelled, true)
     } finally {
       g.TextDecoder = original
     }
@@ -121,6 +125,6 @@ describe('readSse', () => {
 
     await collect(response, { onRetry: (r) => retries.push(r) })
 
-    expect(retries).toEqual([1000])
+    assert.deepEqual(retries, [1000])
   })
 })

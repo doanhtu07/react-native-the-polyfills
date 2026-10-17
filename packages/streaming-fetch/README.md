@@ -1,6 +1,6 @@
 # @the-polyfills/streaming-fetch
 
-Streaming `fetch` over `XMLHttpRequest` for React Native, with a Server-Sent Events (SSE) reader
+Streaming `fetch` over `XMLHttpRequest` for React Native, with a Server-Sent Events (SSE) reader. Plain TypeScript with no dependencies, so it works in browsers too.
 
 React Native's built-in `fetch` waits for the whole response and has no `response.body`. `xhrStreamingFetch` resolves as soon as headers arrive and streams the body as text. `readSse` turns any `fetch` response into a stream of SSE events.
 
@@ -54,6 +54,7 @@ parser.flush() // at end of stream
 - **The server must flush each event and must not compress the response.** Otherwise the body arrives in one piece.
 - **`readSse` works with any `fetch`.** With RN's built-in `fetch` it falls back to reading the whole body, so events only arrive at the end.
 - **No auto-reconnect.** `retry:` values are reported through `onRetry`, and `id` is available on every event, so you can reconnect with `Last-Event-ID` yourself.
+- **Runs anywhere `XMLHttpRequest` exists.** React Native and browsers have it, Node doesn't. `readSse` and `createSseParser` need no `XMLHttpRequest` and run anywhere, Node included.
 - **`xhrStreamingFetch` implements only part of `Response`:** `ok`, `status`, `statusText`, `headers`, `url`, `body.getReader()`, `text()` and `json()`. The body can be read once.
 
 Please refer to README.md at https://github.com/doanhtu07/react-native-the-polyfills for more details and documentation.

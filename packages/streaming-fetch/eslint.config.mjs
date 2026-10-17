@@ -1,40 +1,27 @@
-import { fixupConfigRules } from '@eslint/compat'
-import reactNativeConfig from '@react-native/eslint-config/flat'
+import js from '@eslint/js'
+import { defineConfig, globalIgnores } from 'eslint/config'
+import tseslint from 'typescript-eslint'
 import prettier from 'eslint-plugin-prettier'
-import { defineConfig } from 'eslint/config'
+import { dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export default defineConfig([
-  ...fixupConfigRules(reactNativeConfig).filter(
-    // https://github.com/facebook/react-native/issues/42996#issuecomment-4034672917
-    // ft-flow is not compatible with flat config
-    (config) => config.plugins?.['ft-flow'] === undefined,
-  ),
+  globalIgnores(['dist', 'archived']),
 
   {
-    ignores: ['node_modules/', 'lib/'],
-  },
-
-  // Prettier
-  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [js.configs.recommended, ...tseslint.configs.recommended],
     plugins: { prettier },
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: __dirname,
+      },
+    },
     rules: {
       'prettier/prettier': 'warn',
-    },
-  },
-
-  // React
-  {
-    rules: {
-      'react/react-in-jsx-scope': 'off',
-    },
-  },
-
-  // React Native
-  {
-    rules: {
-      'react-native/no-raw-text': 'error',
-      'react-native/sort-styles': 'warn',
-      'react-native/no-unused-styles': 'warn',
     },
   },
 ])

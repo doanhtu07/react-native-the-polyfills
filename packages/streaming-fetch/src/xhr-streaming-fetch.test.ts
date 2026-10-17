@@ -1,5 +1,6 @@
-import { afterEach, beforeEach, describe, expect, it } from '@jest/globals'
-import { xhrStreamingFetch } from '../xhr-streaming-fetch'
+import assert from 'node:assert/strict'
+import { afterEach, beforeEach, describe, it } from 'node:test'
+import { xhrStreamingFetch } from './xhr-streaming-fetch.js'
 
 /** Drives the `XMLHttpRequest` lifecycle by hand, the way RN's networking does. */
 class FakeXhr {
@@ -121,17 +122,17 @@ describe('xhrStreamingFetch', () => {
 
     const response = await promise
 
-    expect(xhr.method).toBe('POST')
-    expect(xhr.url).toBe('http://x/message')
-    expect(xhr.body).toBe('{"a":1}')
-    expect(xhr.withCredentials).toBe(true)
-    expect(xhr.requestHeaders).toEqual({
+    assert.equal(xhr.method, 'POST')
+    assert.equal(xhr.url, 'http://x/message')
+    assert.equal(xhr.body, '{"a":1}')
+    assert.equal(xhr.withCredentials, true)
+    assert.deepEqual(xhr.requestHeaders, {
       'content-type': 'application/json',
       sitecode: 'CPRTUS',
     })
-    expect(response.ok).toBe(true)
-    expect(response.status).toBe(201)
-    expect(response.headers.get('x-test')).toBe('1')
+    assert.equal(response.ok, true)
+    assert.equal(response.status, 201)
+    assert.equal(response.headers.get('x-test'), '1')
   })
 
   it('streams each new slice of text before the request ends', async () => {
@@ -142,17 +143,17 @@ describe('xhrStreamingFetch', () => {
     const reader = getReader(await promise)
 
     xhr.receive('event: message\n')
-    expect(await reader.read()).toEqual({
+    assert.deepEqual(await reader.read(), {
       done: false,
       value: 'event: message\n',
     })
 
     const pending = reader.read()
     xhr.receive('data: {}\n\n')
-    expect(await pending).toEqual({ done: false, value: 'data: {}\n\n' })
+    assert.deepEqual(await pending, { done: false, value: 'data: {}\n\n' })
 
     xhr.finish()
-    expect(await reader.read()).toEqual({ done: true, value: undefined })
+    assert.deepEqual(await reader.read(), { done: true, value: undefined })
   })
 
   it('reads the whole body with text() and json()', async () => {
@@ -163,7 +164,7 @@ describe('xhrStreamingFetch', () => {
     xhr.receive('"s1"}')
     xhr.finish()
 
-    expect(await (await promise).json()).toEqual({ session_id: 's1' })
+    assert.deepEqual(await (await promise).json(), { session_id: 's1' })
   })
 
   it('reports non-2xx responses without rejecting', async () => {
@@ -175,15 +176,15 @@ describe('xhrStreamingFetch', () => {
 
     const response = await promise
 
-    expect(response.ok).toBe(false)
-    expect(await response.text()).toBe('boom')
+    assert.equal(response.ok, false)
+    assert.equal(await response.text(), 'boom')
   })
 
   it('rejects on a network failure before headers', async () => {
     const promise = xhrStreamingFetch('http://x')
     FakeXhr.last.failNetwork()
 
-    await expect(promise).rejects.toThrow('Network request failed')
+    await assert.rejects(promise, /Network request failed/)
   })
 
   it('fails a pending read, without the error text, when the stream breaks', async () => {
@@ -194,12 +195,12 @@ describe('xhrStreamingFetch', () => {
     const reader = getReader(await promise)
 
     xhr.receive('partial')
-    expect(await reader.read()).toEqual({ done: false, value: 'partial' })
+    assert.deepEqual(await reader.read(), { done: false, value: 'partial' })
 
     const pending = reader.read()
     xhr.failNetwork()
 
-    await expect(pending).rejects.toThrow('Network request failed')
+    await assert.rejects(pending, /Network request failed/)
   })
 
   it('aborts through the signal', async () => {
@@ -215,17 +216,18 @@ describe('xhrStreamingFetch', () => {
 
     controller.abort()
 
-    await expect(pending).rejects.toMatchObject({ name: 'AbortError' })
+    await assert.rejects(pending, { name: 'AbortError' })
   })
 
   it('rejects immediately when the signal is already aborted', async () => {
     const controller = new AbortController()
     controller.abort()
 
-    await expect(
+    await assert.rejects(
       xhrStreamingFetch('http://x', {
         signal: controller.signal as RequestInit['signal'],
       }),
-    ).rejects.toMatchObject({ name: 'AbortError' })
+      { name: 'AbortError' },
+    )
   })
 })

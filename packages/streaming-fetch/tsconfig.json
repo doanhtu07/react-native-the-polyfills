@@ -1,32 +1,27 @@
 {
   "compilerOptions": {
-    "rootDir": ".",
-    "paths": {
-      "@the-polyfills/streaming-fetch": ["./src/index"]
-    },
-    "allowUnreachableCode": false,
-    "allowUnusedLabels": false,
-    "customConditions": [
-      "the-polyfills-streaming-fetch-source",
-      "react-native-strict-api"
-    ],
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "jsx": "react-jsx",
-    "lib": ["ESNext"],
+    "target": "ES2020",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "types": ["node"],
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "noEmit": true,
+    "strict": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
+    "noPropertyAccessFromIndexSignature": true,
     "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "target": "ESNext",
     "verbatimModuleSyntax": true
   },
-  "exclude": ["archived"]
+  "include": ["src"]
 }
