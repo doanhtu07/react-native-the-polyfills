@@ -13,7 +13,7 @@ updates:
     directory: '/'
     target-branch: 'main'
     schedule:
-      interval: 'weekly'
+      interval: 'monthly'
       day: 'saturday'
 
   # GitHub Actions
@@ -30,7 +30,7 @@ updates:
     directory: '/'
     target-branch: 'feat/old-arch-support'
     schedule:
-      interval: 'weekly'
+      interval: 'monthly'
       day: 'saturday'
 
   # GitHub Actions
