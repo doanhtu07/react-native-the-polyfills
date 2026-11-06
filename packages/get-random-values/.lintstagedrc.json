@@ -1,3 +1,7 @@
 {
-  "*.{js,ts,tsx}": ["eslint --fix", "prettier --write"]
+  "**/*.{js,jsx,ts,tsx}": [
+    "pnpm --filter @the-polyfills/get-random-values exec eslint --fix",
+    "pnpm --filter @the-polyfills/get-random-values exec prettier --write"
+  ],
+  "**/*.{css,json,md,yaml,yml}": "pnpm --filter @the-polyfills/get-random-values exec prettier --write"
 }
